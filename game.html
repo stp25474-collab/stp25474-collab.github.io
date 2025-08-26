@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เกมหมีเก็บน้ำผึ้ง</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive;
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 50%, #FFE4B5 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .name-credit {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 14px;
+            color: #8B4513;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+            z-index: 1000;
+        }
+        
+        .game-container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .score-board {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: #8B4513;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+            z-index: 100;
+        }
+        
+        .bear {
+            width: 60px;
+            height: 60px;
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 50px;
+            transition: left 0.1s ease;
+            z-index: 10;
+        }
+        
+        .honey {
+            width: 30px;
+            height: 30px;
+            position: absolute;
+            font-size: 25px;
+            animation: fall linear;
+        }
+        
+        .obstacle {
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            font-size: 35px;
+            animation: fall linear;
+        }
+        
+        @keyframes fall {
+            from {
+                top: -50px;
+            }
+            to {
+                top: 100vh;
+            }
+        }
+        
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+        }
+        
+        .game-over h2 {
+            color: #8B4513;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+        
+        .game-over p {
+            color: #654321;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+        
+        .restart-btn {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #8B4513;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .restart-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .instructions {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #8B4513;
+            font-size: 14px;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+        }
+        
+        .cloud {
+            position: absolute;
+            color: white;
+            font-size: 40px;
+            animation: float 8s infinite linear;
+            opacity: 0.8;
+        }
+        
+        @keyframes float {
+            from {
+                left: -60px;
+            }
+            to {
+                left: 100vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="name-credit">Punyaphon Yawongsa</div>
+    
+    <div class="game-container">
+        <div class="score-board">
+            <div>คะแนน: <span id="score">0</span></div>
+            <div>ชีวิต: <span id="lives">💝💝💝</span></div>
+        </div>
+        
+        <div class="bear" id="bear">🐻</div>
+        
+        <div class="game-over" id="gameOver">
+            <h2>เกมจบแล้ว! 🐻</h2>
+            <p>คะแนนของคุณ: <span id="finalScore">0</span></p>
+            <p>หมีของเราหิวน้ำผึ้งแล้ว!</p>
+            <button class="restart-btn" onclick="restartGame()">เล่นใหม่ 🍯</button>
+        </div>
+        
+        <div class="instructions">
+            ใช้ลูกศร ←→ หรือ A D เพื่อเคลื่อนที่ | เก็บน้ำผึ้ง 🍯 หลีกเลี่ยงก้อนหิน 🪨
+        </div>
+    </div>
+
+    <script>
+        const bear = document.getElementById('bear');
+        const scoreElement = document.getElementById('score');
+        const livesElement = document.getElementById('lives');
+        const gameOverDiv = document.getElementById('gameOver');
+        const finalScoreElement = document.getElementById('finalScore');
+        
+        let bearPosition = 50;
+        let score = 0;
+        let lives = 3;
+        let gameRunning = true;
+        let gameObjects = [];
+        let cloudTimer = 0;
+        
+        // เสียงเอฟเฟกต์ (ใช้ Web Audio API)
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(frequency, duration, type = 'sine') {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration);
+        }
+        
+        // ควบคุมหมี
+        function moveBear(direction) {
+            if (!gameRunning) return;
+            
+            if (direction === 'left' && bearPosition > 5) {
+                bearPosition -= 5;
+            } else if (direction === 'right' && bearPosition < 95) {
+                bearPosition += 5;
+            }
+            bear.style.left = bearPosition + '%';
+        }
+        
+        // จัดการคีย์บอร์ด
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                case 'a':
+                case 'A':
+                    moveBear('left');
+                    break;
+                case 'ArrowRight':
+                case 'd':
+                case 'D':
+                    moveBear('right');
+                    break;
+            }
+        });
+        
+        // จัดการสัมผัส (มือถือ)
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touchCurrentX = e.touches[0].clientX;
+            const diff = touchCurrentX - touchStartX;
+            
+            if (Math.abs(diff) > 20) {
+                if (diff > 0) {
+                    moveBear('right');
+                } else {
+                    moveBear('left');
+                }
+                touchStartX = touchCurrentX;
+            }
+        });
+        
+        // สร้างน้ำผึ้ง
+        function createHoney() {
+            const honey = document.createElement('div');
+            honey.className = 'honey';
+            honey.innerHTML = '🍯';
+            honey.style.left = Math.random() * 90 + 5 + '%';
+            honey.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.querySelector('.game-container').appendChild(honey);
+            
+            gameObjects.push({
+                element: honey,
+                type: 'honey'
+            });
+        }
+        
+        // สร้างอุปสรรค
+        function createObstacle() {
+            const obstacle = document.createElement('div');
+            obstacle.className = 'obstacle';
+            obstacle.innerHTML = '🪨';
+            obstacle.style.left = Math.random() * 90 + 5 + '%';
+            obstacle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            document.querySelector('.game-container').appendChild(obstacle);
+            
+            gameObjects.push({
+                element: obstacle,
+                type: 'obstacle'
+            });
+        }
+        
+        // สร้างเมฆ
+        function createCloud() {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.innerHTML = '☁️';
+            cloud.style.top = Math.random() * 30 + 10 + '%';
+            document.querySelector('.game-container').appendChild(cloud);
+            
+            setTimeout(() => {
+                if (cloud.parentNode) {
+                    cloud.parentNode.removeChild(cloud);
+                }
+            }, 8000);
+        }
+        
+        // ตรวจสอบการชน
+        function checkCollisions() {
+            const bearRect = bear.getBoundingClientRect();
+            
+            gameObjects.forEach((obj, index) => {
+                const objRect = obj.element.getBoundingClientRect();
+                
+                if (bearRect.left < objRect.right &&
+                    bearRect.right > objRect.left &&
+                    bearRect.top < objRect.bottom &&
+                    bearRect.bottom > objRect.top) {
+                    
+                    if (obj.type === 'honey') {
+                        score += 10;
+                        scoreElement.textContent = score;
+                        playSound(800, 0.2);
+                    } else if (obj.type === 'obstacle') {
+                        lives--;
+                        updateLives();
+                        playSound(200, 0.5, 'square');
+                        
+                        if (lives <= 0) {
+                            endGame();
+                            return;
+                        }
+                    }
+                    
+                    obj.element.remove();
+                    gameObjects.splice(index, 1);
+                }
+            });
+        }
+        
+        // อัพเดทชีวิต
+        function updateLives() {
+            const hearts = ['💝💝💝', '💝💝💔', '💝💔💔', '💔💔💔'];
+            livesElement.textContent = hearts[3 - lives] || '💔💔💔';
+        }
+        
+        // ล้างวัตถุที่ตกลงไปแล้ว
+        function cleanupObjects() {
+            gameObjects.forEach((obj, index) => {
+                if (obj.element.getBoundingClientRect().top > window.innerHeight) {
+                    obj.element.remove();
+                    gameObjects.splice(index, 1);
+                }
+            });
+        }
+        
+        // จบเกม
+        function endGame() {
+            gameRunning = false;
+            finalScoreElement.textContent = score;
+            gameOverDiv.style.display = 'block';
+        }
+        
+        // เริ่มเกมใหม่
+        function restartGame() {
+            gameRunning = true;
+            score = 0;
+            lives = 3;
+            bearPosition = 50;
+            
+            scoreElement.textContent = score;
+            updateLives();
+            bear.style.left = bearPosition + '%';
+            gameOverDiv.style.display = 'none';
+            
+            // ล้างวัตถุทั้งหมด
+            gameObjects.forEach(obj => obj.element.remove());
+            gameObjects = [];
+            
+            // ล้างเมฆ
+            document.querySelectorAll('.cloud').forEach(cloud => cloud.remove());
+            
+            cloudTimer = 0;
+        }
+        
+        // ลูปหลักของเกม
+        let lastTime = 0;
+        let honeyTimer = 0;
+        let obstacleTimer = 0;
+        
+        function gameLoop(currentTime) {
+            if (!gameRunning) {
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+            
+            const deltaTime = currentTime - lastTime;
+            lastTime = currentTime;
+            
+            honeyTimer += deltaTime;
+            obstacleTimer += deltaTime;
+            cloudTimer += deltaTime;
+            
+            // สร้างน้ำผึ้งทุก 1.5 วินาที
+            if (honeyTimer > 1500) {
+                createHoney();
+                honeyTimer = 0;
+            }
+            
+            // สร้างอุปสรรคทุก 2-4 วินาที
+            if (obstacleTimer > 2000 + Math.random() * 2000) {
+                createObstacle();
+                obstacleTimer = 0;
+            }
+            
+            // สร้างเมฆทุก 3 วินาที
+            if (cloudTimer > 3000) {
+                createCloud();
+                cloudTimer = 0;
+            }
+            
+            checkCollisions();
+            cleanupObjects();
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // เริ่มเกม
+        requestAnimationFrame(gameLoop);
+        
+        // สร้างเมฆเริ่มต้น
+        setTimeout(() => createCloud(), 1000);
+        setTimeout(() => createCloud(), 2000);
+    </script>
+</body>
+</html>
