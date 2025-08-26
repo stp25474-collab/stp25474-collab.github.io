@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punyaporn Yawongsa</title>
+    <!-- Use Tailwind CSS for modern and responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #fce4ec; /* Light pink background */
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 2rem;
+        }
+        .header {
+            background-color: #f8bbd0; /* Soft pink header */
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #d81b60; /* Darker pink on hover */
+            transform: translateY(-2px);
+        }
+        .card {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .section-title {
+            color: #ad1457; /* Deep pink title */
+            border-bottom: 2px solid #f06292;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body class="p-8">
+
+    <!-- Navigation Menu -->
+    <nav class="bg-white p-4 rounded-xl shadow-lg flex justify-center space-x-6 mb-8">
+        <a href="#home" class="nav-link font-bold text-lg text-pink-500 hover:text-pink-700">หน้าหลัก</a>
+        <a href="#about" class="nav-link font-bold text-lg text-pink-500 hover:text-pink-700">เกี่ยวกับฉัน</a>
+        <a href="#hobbies" class="nav-link font-bold text-lg text-pink-500 hover:text-pink-700">งานอดิเรก</a>
+        <a href="#interests" class="nav-link font-bold text-lg text-pink-500 hover:text-pink-700">ความสนใจ</a>
+        <a href="#contact" class="nav-link font-bold text-lg text-pink-500 hover:text-pink-700">ติดต่อ</a>
+    </nav>
+
+    <div class="container">
+
+        <!-- 1. Home Page -->
+        <section id="home" class="card mb-8">
+            <h1 class="text-4xl font-extrabold section-title text-center mb-4">ยินดีต้อนรับสู่หน้าเว็บของฉัน</h1>
+            <p class="text-lg text-center">สวัสดีค่ะ! ฉันชื่อ ปุณยาพร ยะวงษา ชื่อเล่น พิ้ง ยินดีที่ได้รู้จักทุกคนนะคะ</p>
+        </section>
+
+        <!-- 2. About Me Page -->
+        <section id="about" class="card mb-8">
+            <h2 class="text-3xl font-bold section-title">เกี่ยวกับฉัน</h2>
+            <p class="text-lg">
+                สวัสดีค่ะ! ฉันชื่อ <strong>ปุณยาพร ยะวงษา</strong> ชื่อเล่น <strong>พิ้ง</strong> กำลังศึกษาอยู่ที่โรงเรียนสุรธรรมพิทักษ์
+                ฉันเป็นคนที่มีความสุขกับการเรียนรู้สิ่งใหม่ๆ และชอบที่จะสร้างสรรค์สิ่งต่างๆ รอบตัว
+            </p>
+        </section>
+
+        <!-- 3. Hobbies Page -->
+        <section id="hobbies" class="card mb-8">
+            <h2 class="text-3xl font-bold section-title">งานอดิเรก</h2>
+            <p class="text-lg">
+                เมื่อมีเวลาว่าง ฉันชอบทำกิจกรรมที่สร้างสรรค์และผ่อนคลาย หนึ่งในงานอดิเรกที่ฉันรักมากคือ <strong>การวาดรูป</strong>
+                การวาดรูปช่วยให้ฉันได้แสดงออกถึงจินตนาการและความรู้สึกได้อย่างอิสระ ไม่ว่าจะเป็นการวาดภาพทิวทัศน์
+                หรือภาพการ์ตูน
+            </p>
+        </section>
+
+        <!-- 4. Interests Page -->
+        <section id="interests" class="card mb-8">
+            <h2 class="text-3xl font-bold section-title">ความสนใจ</h2>
+            <p class="text-lg">
+                ฉันมีความสนใจอย่างมากในเรื่องของ <strong>คอมพิวเตอร์</strong> ตั้งแต่การเขียนโค้ดง่ายๆ ไปจนถึงการศึกษาเกี่ยวกับ
+                ระบบการทำงานที่ซับซ้อน นอกจากนี้ฉันยังชอบ <strong>การทำสิ่งประดิษฐ์</strong> ใหม่ๆ ไม่ว่าจะเป็นสิ่งประดิษฐ์
+                ทางอิเล็กทรอนิกส์หรือโปรแกรมคอมพิวเตอร์ การได้เห็นสิ่งที่เราสร้างขึ้นมาทำงานได้จริงเป็นความสุขอย่างหนึ่งของฉัน
+            </p>
+        </section>
+
+        <!-- 5. Contact Page -->
+        <section id="contact" class="card mb-8">
+            <h2 class="text-3xl font-bold section-title">ติดต่อ</h2>
+            <p class="text-lg">
+                คุณสามารถติดต่อฉันได้ผ่านช่องทางต่างๆ หรือฝากข้อความไว้ด้านล่างนี้
+            </p>
+            <form class="mt-4">
+                <div class="mb-4">
+                    <label for="name" class="block text-gray-700 text-sm font-bold mb-2">ชื่อ:</label>
+                    <input type="text" id="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="ชื่อของคุณ">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-gray-700 text-sm font-bold mb-2">อีเมล:</label>
+                    <input type="email" id="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="อีเมลของคุณ">
+                </div>
+                <div class="mb-6">
+                    <label for="message" class="block text-gray-700 text-sm font-bold mb-2">ข้อความ:</label>
+                    <textarea id="message" rows="4" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="ข้อความของคุณ"></textarea>
+                </div>
+                <div class="flex items-center justify-between">
+                    <button type="submit" class="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:shadow-outline transform hover:scale-105 transition-transform duration-200">
+                        ส่งข้อความ
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-600 mt-8">
+            <p>&copy; 2024 Punyaporn Yawongsa. All Rights Reserved.</p>
+        </footer>
+
+    </div>
+</body>
+</html>
